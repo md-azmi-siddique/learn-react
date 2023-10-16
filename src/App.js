@@ -3,7 +3,27 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const people = ["a", "b", "c", "d", "e", "f"];
+  const people1 = ["a", "b", "c", "d", "e", "f"]; //for a single array
+
+  //for an object
+  const people2 = [
+    { name: "a", age: 20 },
+    { name: "b", age: 35 },
+    { name: "c", age: 45 },
+    { name: "d", age: 68 },
+    { name: "e", age: 90 },
+    { name: "f", age: 95 },
+    { name: "g", age: 100 },
+  ];
+
+  //for data load from api
+  const [people3, setData] = useState([]);
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/photos")
+      .then((response) => response.json())
+      .then((data) => setData(data));
+  }, []);
+
   const products = [
     { name: "photoshop", price: "&200" },
     { name: "illestot", price: "&200" },
@@ -12,27 +32,26 @@ function App() {
     { name: "light", price: "&200" },
     { name: "sfgs", price: "&200" },
   ];
-  // const product = products.map(s => s.name)
-  // console.log(product)
 
   return (
     <div className="App">
-      <header className="App-header">
-        <Person name="kuddus" job="player"></Person>
-        <Person name="Rafir" job="dancer"></Person>
-        {/*///////////////////////////////////////*/}
-        <Counter></Counter>
-        {/*///////////////////////////////////////*/}
-        <User></User>
+      {people1.map((s) => (
+        <Person name={s}></Person>
+      ))}
 
-        {products.map((pd) => (
-          <ProductPrice product={pd}></ProductPrice>
-        ))}
+      {people2.map((s) => (
+        <Person name={s.name} age={s.age}></Person>
+      ))}
 
-        {
-          people.map(names => <li>{names}</li>)
-        }
-      </header>
+      {people3.slice(0,10).map((s) => ( //slice is used to vew only first 10 elements
+        <User key={s.id} title={s.title} url={s.url}></User>
+      ))}
+
+      {products.map((pd) => (
+        <ProductPrice name={pd.name} price={pd.price}></ProductPrice>
+      ))}
+
+      <Counter></Counter>
     </div>
   );
 }
@@ -49,7 +68,7 @@ const Person = (props) => {
   return (
     <div style={personStyle}>
       <h3>Name: {props.name}</h3>
-      <p>Profession: {props.job}</p>
+      <p>Age: {props.age}</p>
     </div>
   );
 };
@@ -65,12 +84,10 @@ const ProductPrice = (props) => {
     float: "left",
   };
 
-  const { name, price } = props.product;
-
   return (
     <div style={priceStyle}>
-      <h6>Name: {name}</h6>
-      <h6>Price: {price} </h6>
+      <h6>Name: {props.ame}</h6>
+      <h6>Price: {props.price} </h6>
       <button>Buy Now</button>
     </div>
   );
@@ -81,13 +98,11 @@ const ProductPrice = (props) => {
 const Counter = () => {
   const [count, setCount] = useState(0); //count = 0 and setCount is a function
   const handleIncrease = () => {
-    console.log("Increase");
     const newCount = count + 1;
     setCount(newCount);
   };
 
   const handleDecrease = () => {
-    console.log("Decrease");
     const newCount = count - 1;
     setCount(newCount);
   };
@@ -111,28 +126,13 @@ const Counter = () => {
 
 //****************************************************************************************************** */
 //load data
-const User = () => {
-  const [user, setUser] = useState([]);
-
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => setUser(data));
-  }, []);
+const User = (props) => {
   return (
     <div>
-      <h6>
-        ***********************************************************************************************************************************
-      </h6>
-      <h3>Users</h3>
-      <ul>
-        {user.map((u) => (
-          <li>
-            id: {u.id} Name: {u.name} Email:{u.email}
-          </li>
-        ))}
-      </ul>
+      <h6>Title: {props.title}</h6>
+      <h6>URL: {props.url}</h6>
     </div>
   );
 };
+
 export default App;
